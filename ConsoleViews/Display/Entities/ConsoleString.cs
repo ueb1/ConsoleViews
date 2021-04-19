@@ -1,11 +1,10 @@
-﻿using BestiLeikurinn.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BestiLeikurinn.Display.Entities
+namespace ConsoleViews.Display.Entities
 {
     public class ConsoleString
     {

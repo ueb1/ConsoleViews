@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BestiLeikurinn.Cells
+namespace ConsoleViews.Cells
 {
     public class Cell
     {

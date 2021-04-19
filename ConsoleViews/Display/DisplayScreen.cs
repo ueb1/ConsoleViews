@@ -1,49 +1,153 @@
-﻿using BestiLeikurinn.Exceptions;
+﻿using ConsoleViews.Display.Entities;
+using ConsoleViews.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BestiLeikurinn.Display
+namespace ConsoleViews.Display
 {
     public class DisplayScreen
     {
         public int Columns { get; private set; }
         public int Lines { get; private set; }
 
-        public List<DisplayBox> DisplayBoxes { get; set; }
+        private ColoredChar[,] buffer;
+        private List<DisplayBox> displayBoxes;
 
         public DisplayScreen(int nrCols, int nrLines)
         {
             Columns = nrCols;
             Lines = nrLines;
-            DisplayBoxes = new List<DisplayBox>();
-            Console.SetWindowSize(nrCols, nrLines);
-            Console.CursorVisible = false;
+            displayBoxes = new List<DisplayBox>();
+            //Console.SetWindowSize(nrCols, nrLines + 2);
+//            Console.CursorVisible = false;
+            buffer = new ColoredChar[nrCols, nrLines];
         }
 
         public void Add(DisplayBox box)
         {
-            if (DisplayBoxes.Exists(x => x.Name == box.Name))
+            if (displayBoxes.Exists(x => x.Name == box.Name))
             {
                 throw new DisplayBoxExistsException(box.Name);
             }
             else
-                DisplayBoxes.Add(box);
+                displayBoxes.Add(box);
         }
 
-        public void PrintScreen(bool clear = false)
+        public string[] GetDisplayBoxNames()
         {
-            if (clear)
-                Console.Clear();
+            return displayBoxes.Select(x => x.Name).ToArray();
+        }
 
-            foreach(DisplayBox box in DisplayBoxes)
+        public void LoadBorders()
+        {
+            foreach (DisplayBox box in displayBoxes)
             {
-                box.Print();
+                if (box.Border != null)
+                {
+                    for (int i = box.DisplayY; i < box.DisplayY + box.Border.Thickness[DisplayBorder.TOP] + box.Border.Thickness[DisplayBorder.BOTTOM]; i++)
+                    {
+                        int line = i;
+                        if (i >= box.DisplayY + box.Border.Thickness[DisplayBorder.TOP])
+                            line = (i - box.Border.Thickness[DisplayBorder.TOP]) + (box.DisplayHeight - box.Border.Thickness[DisplayBorder.BOTTOM]);
+                        for (int j = box.DisplayX; j < box.DisplayX + box.DisplayWidth; j++)
+                        {
+                            buffer[j, line] = new ColoredChar { BackgroundColor = box.Border.BackgroundColor, Character = box.Border.Symbol, ForegroundColor = box.Border.ForegroundColor };
+                        }
+                    }
+
+                    for (int i = box.DisplayY + box.Border.Thickness[DisplayBorder.TOP]; i < box.DisplayY + box.DisplayHeight - box.Border.Thickness[DisplayBorder.BOTTOM]; i++)
+                    {
+                        for (int j = box.DisplayX; j < box.DisplayX + box.Border.Thickness[DisplayBorder.LEFT]; j++)
+                        {
+                            buffer[j, i] = new ColoredChar { BackgroundColor = box.Border.BackgroundColor, Character = box.Border.Symbol, ForegroundColor = box.Border.ForegroundColor };
+                        }
+
+                        for (int j = box.DisplayX + box.DisplayWidth - box.Border.Thickness[DisplayBorder.RIGHT]; j < box.DisplayX + box.DisplayWidth; j++)
+                        {
+                            buffer[j, i] = new ColoredChar { BackgroundColor = box.Border.BackgroundColor, Character = box.Border.Symbol, ForegroundColor = box.Border.ForegroundColor };
+                        }
+                    }
+                }
+            }
+        }
+
+        public void WriteString(string boxName, string str, ConsoleColor foregroundColor, ConsoleColor backgroundColor, int line, int col)
+        {
+            DisplayBox box = displayBoxes.FirstOrDefault(x => x.Name == boxName);
+            if (box != null)
+            {
+                for (int i = 0; i < str.Length; i++)
+                {
+                    if(col + i < box.DisplayWidth)
+                        buffer[box.DisplayX + col + i, box.DisplayY + line] = new ColoredChar { BackgroundColor = backgroundColor, Character = str[i], ForegroundColor = foregroundColor };
+                }
+            }
+            else
+            {
+                throw new ArgumentException("Display box with given name does not exists");
+            }
+        }
+        
+        public void Clear()
+        {
+            buffer = new ColoredChar[Columns, Lines];
+        }
+
+        public void Clear(string boxName)
+        {
+            DisplayBox box = displayBoxes.FirstOrDefault(x => x.Name == boxName);
+            if (box != null)
+            {
+                for (int i = box.DisplayX; i < box.DisplayX + box.DisplayWidth; i++)
+                {
+                    for (int j = box.DisplayY; i < box.DisplayY + box.DisplayHeight; i++)
+                    {
+                        buffer[i, j] = new ColoredChar();
+                    }
+                }
+            }
+        }
+
+        public void PrintScreen()
+        {
+            int writes = 0;
+            for (int i = 0; i < buffer.GetLength(1); i++)
+            {
+                string stringBuffer = "";
+                for (int j = 0; j < buffer.GetLength(0); j++)
+                {
+                    if (buffer[j, i].Character != 0)
+                    {
+                        if (buffer[j, i].ForegroundColor != Console.ForegroundColor || buffer[j, i].BackgroundColor != Console.BackgroundColor)
+                        {
+                            if (stringBuffer.Length > 0)
+                            {
+                                Console.Write(stringBuffer);
+                                stringBuffer = "";
+                            }
+                            Console.ForegroundColor = buffer[j, i].ForegroundColor;
+                            Console.BackgroundColor = buffer[j, i].BackgroundColor;
+                        }
+                        stringBuffer += buffer[j, i].Character;
+                    }
+                    else
+                    {
+                        // Optimized for empty cells
+                        Console.BackgroundColor = ConsoleColor.Black;
+                        while (j < Columns && buffer[j, i].Character == 0)
+                        {
+                            j++;
+                            stringBuffer += ' ';
+                        }
+                        j--;
+                    }
+                };
+                Console.WriteLine(stringBuffer);
             }
 
-            Console.SetCursorPosition(0, Console.WindowHeight - 4);
         }
     }
 }

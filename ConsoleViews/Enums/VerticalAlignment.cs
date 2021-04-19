@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BestiLeikurinn.Enums
+namespace ConsoleViews.Enums
 {
     public enum VerticalAlignment
     {
