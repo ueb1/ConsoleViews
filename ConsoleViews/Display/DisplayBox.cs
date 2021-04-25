@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace ConsoleViews.Display
 {
@@ -21,6 +22,7 @@ namespace ConsoleViews.Display
         public short DisplayX { get; private set; }
         public short DisplayY { get; private set; }
         public DisplayBorder Border { get; private set; }
+        public Rect Rectangle { get; private set; }
 
         public DisplayBox(string name, int x, int y, int width, int height, DisplayBorder border = null)
         {
@@ -53,6 +55,8 @@ namespace ConsoleViews.Display
             DisplayX = (short)x;
             DisplayY = (short)y;
             Border = border;
+
+            Rectangle = new Rect(x, y, width, height);
         }
     }
 }

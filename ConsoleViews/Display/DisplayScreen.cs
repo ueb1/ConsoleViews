@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace ConsoleViews.Display
 {
@@ -33,7 +34,14 @@ namespace ConsoleViews.Display
                 throw new DisplayBoxExistsException(box.Name);
             }
             else
-                displayBoxes.Add(box);
+            {
+                foreach(DisplayBox boxInList in displayBoxes)
+                {
+                    if (box.Rectangle.IntersectsWith(boxInList.Rectangle))
+                        throw new DisplayBoxOverlapException();
+                }
+            }
+            displayBoxes.Add(box);
         }
 
         public string[] GetDisplayBoxNames()

@@ -103,11 +103,14 @@ namespace ConsoleViews.Tests
         }
 
         [Theory]
+        //Upper bounds
         [InlineData(10, 1, 1, 1, 20, 10)]
         [InlineData(1, 5, 1, 1, 20, 10)]
         [InlineData(1, 1, 10, 1, 20, 10)]
         [InlineData(1, 1, 1, 5, 20, 10)]
+        [InlineData(10, 5, 10, 5, 20, 10)]
 
+        //Lower bounds
         [InlineData(0, 1, 1, 1, 20, 10)]
         [InlineData(1, 0, 1, 1, 20, 10)]
         [InlineData(1, 1, 0, 1, 20, 10)]
@@ -130,7 +133,7 @@ namespace ConsoleViews.Tests
         }
 
         [Fact]
-        public void Add_BoxNameAlreadyExists()
+        public void Add_BoxNameAlreadyExistsThrowsException()
         {
             //Set up
             string boxName = "MyBox";
@@ -163,6 +166,34 @@ namespace ConsoleViews.Tests
         }
 
         [Theory]
+        [InlineData(0, 0, 20, 10, 20, 0, 20, 10)]
+        [InlineData(0, 0, 20, 10, 0, 10, 20, 10)]
+        public void Add_NewBoxGetsAddedToNonEmptyList(int box1X, int box1Y, int box1Width, int box1Height, int box2X, int box2Y, int box2Width, int box2Height)
+        {
+            //Set up
+            DisplayBox box1 = new DisplayBox("Box1", box1X, box1Y, box1Width, box1Height);
+            DisplayBox box2 = new DisplayBox("Box2", box2X, box2Y, box2Width, box2Height);
+            DisplayScreen screen = new DisplayScreen(150, 50);
+            screen.Add(box1);
+
+            //No assert needed as test succeeds if no exception is thrown
+        }
+        [Theory]
+        [InlineData(0, 0, 20, 10, 19, 0, 20, 10)]
+        [InlineData(0, 0, 20, 10, 0, 9, 20, 10)]
+        public void Add_OverlappingBoxesThrowsException(int box1X, int box1Y, int box1Width, int box1Height, int box2X, int box2Y, int box2Width, int box2Height)
+        {
+            //Set up
+            DisplayBox box1 = new DisplayBox("Box1", box1X, box1Y, box1Width, box1Height);
+            DisplayBox box2 = new DisplayBox("Box2", box2X, box2Y, box2Width, box2Height);
+            DisplayScreen screen = new DisplayScreen(150, 50);
+            screen.Add(box1);
+
+            //Assertion
+            Assert.Throws<DisplayBoxOverlapException>(() => screen.Add(box2));
+        }
+
+        [Theory]
         [InlineData("Hello world!", 15, 35, "Hello world!")]
         [InlineData("Hello world!", 0, 0, "Hello world!")]
         [InlineData("Hello world!", 40, 68, "")]
@@ -178,13 +209,11 @@ namespace ConsoleViews.Tests
             int boxHeight = 30;
             DisplayBox box = new DisplayBox("MyBox", boxX, boxY, boxWidth, boxHeight);
             DisplayScreen screen = new DisplayScreen(displayWidth, displayHeight);
-            ConsoleColor textColor = ConsoleColor.White;
-            ConsoleColor textBackgroundColor = ConsoleColor.Black;
             screen.Add(box);
             int stringBufferPtr = displayWidth * line + (line * 2) + column;
 
             //Action
-            screen.WriteString("MyBox", text, textColor, textBackgroundColor, line, column);
+            screen.WriteString("MyBox", text, ConsoleColor.White, ConsoleColor.Black, line, column);
             StringWriter sw = new StringWriter();
             Console.SetOut(sw);
             screen.PrintScreen();
@@ -195,7 +224,7 @@ namespace ConsoleViews.Tests
         }
 
         [Fact]
-        public void PrintScreen_InvalidBoxNameExceptionThrown()
+        public void WriteString_InvalidBoxNameExceptionThrown()
         {
             //Set up
             DisplayBox box = new DisplayBox("MyBox", 0, 0, 80, 30);
@@ -205,5 +234,25 @@ namespace ConsoleViews.Tests
             //Action - assert
             Assert.Throws<ArgumentException>(() => screen.WriteString("BogusName", "SomeText", ConsoleColor.Black, ConsoleColor.White, 0, 0));
         }
+
+        //[Fact]
+        //public void Clear_OutputGetsCleared()
+        //{
+        //    //Set up
+        //    DisplayBorder border = new DisplayBorder('#', 1);
+        //    DisplayBox box = new DisplayBox("MyBox", 0, 0, 80, 30, border);
+        //    DisplayScreen screen = new DisplayScreen(150, 50);
+        //    screen.Add(box);
+        //    screen.WriteString("MyBox", "SomeText", ConsoleColor.Black, ConsoleColor.White, 0, 0);
+
+        //    //Action
+        //    screen.Clear();
+        //    StringWriter sw = new StringWriter();
+        //    Console.SetOut(sw);
+        //    screen.PrintScreen();
+
+        //    //Assertion
+
+        //}
     }
 }
