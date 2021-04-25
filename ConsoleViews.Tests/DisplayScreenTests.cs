@@ -3,6 +3,7 @@ using ConsoleViews.Enums;
 using ConsoleViews.Exceptions;
 using System;
 using System.IO;
+using System.Linq;
 using Xunit;
 
 namespace ConsoleViews.Tests
@@ -175,6 +176,7 @@ namespace ConsoleViews.Tests
             DisplayBox box2 = new DisplayBox("Box2", box2X, box2Y, box2Width, box2Height);
             DisplayScreen screen = new DisplayScreen(150, 50);
             screen.Add(box1);
+            screen.Add(box2);
 
             //No assert needed as test succeeds if no exception is thrown
         }
@@ -235,24 +237,62 @@ namespace ConsoleViews.Tests
             Assert.Throws<ArgumentException>(() => screen.WriteString("BogusName", "SomeText", ConsoleColor.Black, ConsoleColor.White, 0, 0));
         }
 
-        //[Fact]
-        //public void Clear_OutputGetsCleared()
-        //{
-        //    //Set up
-        //    DisplayBorder border = new DisplayBorder('#', 1);
-        //    DisplayBox box = new DisplayBox("MyBox", 0, 0, 80, 30, border);
-        //    DisplayScreen screen = new DisplayScreen(150, 50);
-        //    screen.Add(box);
-        //    screen.WriteString("MyBox", "SomeText", ConsoleColor.Black, ConsoleColor.White, 0, 0);
+        [Fact]
+        public void Clear_OutputGetsCleared()
+        {
+            //Set up
+            int lines = 10;
+            int cols = 10;
+            DisplayBorder border = new DisplayBorder('#', 1);
+            DisplayBox box = new DisplayBox("MyBox", 0, 0, cols, lines, border);
+            DisplayScreen screen = new DisplayScreen(cols, lines);
+            screen.Add(box);
+            screen.LoadBorders();
+            screen.WriteString("MyBox", "SomeText", ConsoleColor.Black, ConsoleColor.White, 0, 0);
+            string expectedString = string.Concat(Enumerable.Repeat(new string(' ', 10) + Environment.NewLine, 10));
 
-        //    //Action
-        //    screen.Clear();
-        //    StringWriter sw = new StringWriter();
-        //    Console.SetOut(sw);
-        //    screen.PrintScreen();
+            //Action
+            screen.Clear();
+            StringWriter sw = new StringWriter();
+            Console.SetOut(sw);
+            screen.PrintScreen();
+            string actualString = sw.ToString();
 
-        //    //Assertion
+            //Assertion
+            Assert.True(expectedString == actualString);
+        }
 
-        //}
+        [Fact]
+        public void Clear_DisplayBoxGetsCleared()
+        {
+            //Set up
+            int boxLines = 10;
+            int boxCols = 10;
+            DisplayBorder border1 = new DisplayBorder('#', 1);
+            DisplayBorder border2 = new DisplayBorder('#', 1);
+            DisplayBox box1 = new DisplayBox("Box1", 0, 0, boxCols, boxLines, border1);
+            DisplayBox box2 = new DisplayBox("Box2", 0, boxLines, boxCols, boxLines, border2);
+            DisplayScreen screen = new DisplayScreen(10, 20);
+            screen.Add(box1);
+            screen.Add(box2);
+            screen.LoadBorders();
+            screen.WriteString("Box1", "SomeText", ConsoleColor.Black, ConsoleColor.White, 0, 0);
+            screen.WriteString("Box2", "SomeText", ConsoleColor.Black, ConsoleColor.White, 0, 0);
+            string expectedString1 = string.Concat(Enumerable.Repeat(new string(' ', 10) + Environment.NewLine, 10));
+
+            //Action
+            screen.Clear("Box1");
+            StringWriter sw = new StringWriter();
+            Console.SetOut(sw);
+            screen.PrintScreen();
+            int splitPtr = (boxCols + 2) * boxLines;
+            string actualString1 = sw.ToString().Substring(0, splitPtr);
+            string actualString2 = sw.ToString().Substring(splitPtr);
+
+            //Assertion
+            Assert.Equal(expectedString1, actualString1);       // Box1 should be cleared
+            Assert.NotEqual(expectedString1, actualString2);    // but not Box2
+        }
     }
 }
+

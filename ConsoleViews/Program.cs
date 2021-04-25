@@ -4,6 +4,7 @@ using ConsoleViews.Enums;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows;
 
 namespace ConsoleViews
 {
@@ -37,7 +38,6 @@ namespace ConsoleViews
             screen.WriteString("BottomBox", " 21.3.2021 14:23 - Some event has been logged", ConsoleColor.White, ConsoleColor.Black, 2, 1);
             screen.WriteString("BottomBox", " 21.3.2021 14:42 - Some event has been logged", ConsoleColor.White, ConsoleColor.Black, 3, 1);
             screen.WriteString("BottomBox", " 21.3.2021 17:42 - Some event has been logged", ConsoleColor.White, ConsoleColor.Black, 4, 1);
-
             //StringWriter sw = new StringWriter();
             //Console.SetOut(sw);
             screen.PrintScreen();

@@ -37,7 +37,8 @@ namespace ConsoleViews.Display
             {
                 foreach(DisplayBox boxInList in displayBoxes)
                 {
-                    if (box.Rectangle.IntersectsWith(boxInList.Rectangle))
+                    Rect intersection = Rect.Intersect(box.Rectangle, boxInList.Rectangle);
+                    if (intersection.Width > 0 && intersection.Height > 0)
                         throw new DisplayBoxOverlapException();
                 }
             }
@@ -111,7 +112,7 @@ namespace ConsoleViews.Display
             {
                 for (int i = box.DisplayX; i < box.DisplayX + box.DisplayWidth; i++)
                 {
-                    for (int j = box.DisplayY; i < box.DisplayY + box.DisplayHeight; i++)
+                    for (int j = box.DisplayY; j < box.DisplayY + box.DisplayHeight; j++)
                     {
                         buffer[i, j] = new ColoredChar();
                     }
