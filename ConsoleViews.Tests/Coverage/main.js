@@ -224,11 +224,12 @@ var assemblies = [
   {
     "name": "ConsoleViews",
     "classes": [
-      { "name": "ConsoleViews.Display.DisplayBorder", "rp": "ConsoleViews_DisplayBorder.html", "cl": 11, "ucl": 7, "cal": 18, "tl": 37, "ct": "LineCoverage", "mc": "-", "cb": 0, "tb": 0, "lch": [], "bch": [], "hc": [] },
-      { "name": "ConsoleViews.Display.DisplayBox", "rp": "ConsoleViews_DisplayBox.html", "cl": 35, "ucl": 0, "cal": 35, "tl": 58, "ct": "LineCoverage", "mc": "-", "cb": 8, "tb": 8, "lch": [], "bch": [], "hc": [] },
-      { "name": "ConsoleViews.Display.DisplayScreen", "rp": "ConsoleViews_DisplayScreen.html", "cl": 85, "ucl": 25, "cal": 110, "tl": 153, "ct": "LineCoverage", "mc": "-", "cb": 34, "tb": 46, "lch": [], "bch": [], "hc": [] },
+      { "name": "ConsoleViews.Display.DisplayBorder", "rp": "ConsoleViews_DisplayBorder.html", "cl": 45, "ucl": 0, "cal": 45, "tl": 71, "ct": "LineCoverage", "mc": "-", "cb": 16, "tb": 16, "lch": [], "bch": [], "hc": [] },
+      { "name": "ConsoleViews.Display.DisplayBox", "rp": "ConsoleViews_DisplayBox.html", "cl": 57, "ucl": 0, "cal": 57, "tl": 83, "ct": "LineCoverage", "mc": "-", "cb": 28, "tb": 28, "lch": [], "bch": [], "hc": [] },
+      { "name": "ConsoleViews.Display.DisplayScreen", "rp": "ConsoleViews_DisplayScreen.html", "cl": 126, "ucl": 0, "cal": 126, "tl": 171, "ct": "LineCoverage", "mc": "-", "cb": 54, "tb": 56, "lch": [], "bch": [], "hc": [] },
       { "name": "ConsoleViews.Display.Entities.ColoredChar", "rp": "ConsoleViews_ColoredChar.html", "cl": 3, "ucl": 0, "cal": 3, "tl": 15, "ct": "LineCoverage", "mc": "-", "cb": 0, "tb": 0, "lch": [], "bch": [], "hc": [] },
       { "name": "ConsoleViews.Exceptions.DisplayBoxExistsException", "rp": "ConsoleViews_DisplayBoxExistsException.html", "cl": 3, "ucl": 0, "cal": 3, "tl": 18, "ct": "LineCoverage", "mc": "-", "cb": 0, "tb": 0, "lch": [], "bch": [], "hc": [] },
+      { "name": "ConsoleViews.Exceptions.DisplayBoxOverlapException", "rp": "ConsoleViews_DisplayBoxOverlapException.html", "cl": 1, "ucl": 0, "cal": 1, "tl": 15, "ct": "LineCoverage", "mc": "-", "cb": 0, "tb": 0, "lch": [], "bch": [], "hc": [] },
       { "name": "ConsoleViews.Exceptions.InvalidBorderException", "rp": "ConsoleViews_InvalidBorderException.html", "cl": 1, "ucl": 0, "cal": 1, "tl": 13, "ct": "LineCoverage", "mc": "-", "cb": 0, "tb": 0, "lch": [], "bch": [], "hc": [] },
     ]},
 ];
@@ -243,18 +244,18 @@ var riskHotspotMetrics = [
 
 var riskHotspots = [
   {
-    "assembly": "ConsoleViews", "class": "ConsoleViews.Display.DisplayScreen", "reportPath": "ConsoleViews_DisplayScreen.html", "methodName": "System.Void ConsoleViews.Display.DisplayScreen::PrintScreen()", "methodShortName": "PrintScreen()", "fileIndex": 0, "line": 115,
+    "assembly": "ConsoleViews", "class": "ConsoleViews.Display.DisplayBox", "reportPath": "ConsoleViews_DisplayBox.html", "methodName": "System.Void ConsoleViews.Display.DisplayBox::.ctor(System.String,System.Int32,System.Int32,System.Int32,System.Int32,ConsoleViews.Display.DisplayBorder)", "methodShortName": ".ctor(...)", "fileIndex": 0, "line": 27,
+    "metrics": [
+      { "value": 15, "exceeded": false },
+      { "value": 16384, "exceeded": true },
+      { "value": 15, "exceeded": false },
+    ]},
+  {
+    "assembly": "ConsoleViews", "class": "ConsoleViews.Display.DisplayScreen", "reportPath": "ConsoleViews_DisplayScreen.html", "methodName": "System.Void ConsoleViews.Display.DisplayScreen::PrintScreen()", "methodShortName": "PrintScreen()", "fileIndex": 0, "line": 133,
     "metrics": [
       { "value": 9, "exceeded": false },
       { "value": 256, "exceeded": true },
-      { "value": 10, "exceeded": false },
-    ]},
-  {
-    "assembly": "ConsoleViews", "class": "ConsoleViews.Display.DisplayScreen", "reportPath": "ConsoleViews_DisplayScreen.html", "methodName": "System.Void ConsoleViews.Display.DisplayScreen::Clear(System.String)", "methodShortName": "Clear(...)", "fileIndex": 0, "line": 100,
-    "metrics": [
-      { "value": 4, "exceeded": false },
-      { "value": 8, "exceeded": false },
-      { "value": 20, "exceeded": true },
+      { "value": 9, "exceeded": false },
     ]},
 ];
 

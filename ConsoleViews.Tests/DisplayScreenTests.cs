@@ -2,6 +2,7 @@ using ConsoleViews.Display;
 using ConsoleViews.Enums;
 using ConsoleViews.Exceptions;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Xunit;
@@ -10,6 +11,24 @@ namespace ConsoleViews.Tests
 {
     public class DisplayScreenTests
     {
+        [Theory]
+        [InlineData(0, 0)]
+        [InlineData(150, 50)]
+        public void DisplayScreen_NewScreenWithArgumentsValues(int width, int height)
+        {
+            DisplayScreen screen = new DisplayScreen(width, height);
+        }
+
+        [Theory]
+        [InlineData(-1, 0)]
+        [InlineData(0, -1)]
+        [InlineData(151, 0)]
+        [InlineData(0, 51)]
+        public void DisplayScreen_NewScreenWithInvalidArgumentsThrowsException(int width, int height)
+        {
+            Assert.Throws<ArgumentException>(() => new DisplayScreen(width, height));
+        }
+
         [Theory]
         [InlineData('#', 1, 1, 1, 1, 20, 10, 0, "####################")]
         [InlineData('#', 1, 1, 1, 1, 20, 10, 1, "#                  #")]
@@ -78,61 +97,6 @@ namespace ConsoleViews.Tests
             Assert.True(targetString == expectedString);
         }
 
-        [Theory]
-        //Too large
-        [InlineData(11, 1, 1, 1, 20, 10)]
-        [InlineData(1, 6, 1, 1, 20, 10)]
-        [InlineData(1, 1, 11, 1, 20, 10)]
-        [InlineData(1, 1, 1, 6, 20, 10)]
-        //Negative thickness
-        [InlineData(-1, 1, 1, 1, 20, 10)]
-        [InlineData(1, -1, 1, 1, 20, 10)]
-        [InlineData(1, 1, -1, 1, 20, 10)]
-        [InlineData(1, 1, 1, -1, 20, 10)]
-        public void LoadBorders_InvalidBordersThrowException(int borderThickness_left, int borderThickness_top, 
-            int borderThickness_right, int borderThickness_bottom, int boxWidth, int boxHeight)
-        {
-            //Set up
-            DisplayBorder border = new DisplayBorder('#');
-            border.Thickness[DisplayBorder.LEFT] = borderThickness_left;
-            border.Thickness[DisplayBorder.TOP] = borderThickness_top;
-            border.Thickness[DisplayBorder.RIGHT] = borderThickness_right;
-            border.Thickness[DisplayBorder.BOTTOM] = borderThickness_bottom;
-
-            //Action - assert
-            Assert.Throws<InvalidBorderException>(() => new DisplayBox("MyBox", 0, 0, boxWidth, boxHeight, border));
-        }
-
-        [Theory]
-        //Upper bounds
-        [InlineData(10, 1, 1, 1, 20, 10)]
-        [InlineData(1, 5, 1, 1, 20, 10)]
-        [InlineData(1, 1, 10, 1, 20, 10)]
-        [InlineData(1, 1, 1, 5, 20, 10)]
-        [InlineData(10, 5, 10, 5, 20, 10)]
-
-        //Lower bounds
-        [InlineData(0, 1, 1, 1, 20, 10)]
-        [InlineData(1, 0, 1, 1, 20, 10)]
-        [InlineData(1, 1, 0, 1, 20, 10)]
-        [InlineData(1, 1, 1, 0, 20, 10)]
-        [InlineData(0, 0, 0, 0, 20, 10)]
-        public void LoadBorders_BordersAreValid(int borderThickness_left, int borderThickness_top, 
-            int borderThickness_right, int borderThickness_bottom, int boxWidth, int boxHeight)
-        {
-            //Set up
-            DisplayBorder border = new DisplayBorder('#');
-            border.Thickness[DisplayBorder.LEFT] = borderThickness_left;
-            border.Thickness[DisplayBorder.TOP] = borderThickness_top;
-            border.Thickness[DisplayBorder.RIGHT] = borderThickness_right;
-            border.Thickness[DisplayBorder.BOTTOM] = borderThickness_bottom;
-
-            //Action
-            new DisplayBox("MyBox", 0, 0, boxWidth, boxHeight, border);
-
-            //No assert needed as test succeeds if no exception is thrown
-        }
-
         [Fact]
         public void Add_BoxNameAlreadyExistsThrowsException()
         {
@@ -149,21 +113,26 @@ namespace ConsoleViews.Tests
             Assert.Throws<DisplayBoxExistsException>(() => screen.Add(box2));
         }
 
-        [Fact]
-        public void Add_NewBoxGetsAddedCorrectly()
+        [Theory]
+        [InlineData("Box1", 0, 0, 0, 0, 50, 50)]
+        [InlineData("Box1", 0, 0, 50, 50, 50, 50)]
+        public void Add_NewBoxGetsAddedCorrectly(string name, int x, int y, int width, int height, int screenWidth, int screenHeight)
         {
             //Set up
-            string boxName = "MyBox";
-            DisplayScreen screen = new DisplayScreen(150, 50);
-            DisplayBox box = new DisplayBox(boxName, 0, 0, 80, 30);
+            DisplayScreen screen = new DisplayScreen(screenWidth, screenHeight);
+            DisplayBox box = new DisplayBox(name, x, y, width, height);
 
             //Action
             screen.Add(box);
-            string[] names = screen.GetDisplayBoxNames();
+            List<DisplayBox> boxList = screen.GetDisplayBoxes();
 
             //Assert
-            Assert.True(names.Length > 0);
-            Assert.True(names[0] == boxName);
+            Assert.True(boxList.Count > 0);
+            Assert.True(boxList[0].Name == name);
+            Assert.True(boxList[0].DisplayX == x);
+            Assert.True(boxList[0].DisplayY == y);
+            Assert.True(boxList[0].DisplayWidth == width);
+            Assert.True(boxList[0].DisplayHeight == height);
         }
 
         [Theory]

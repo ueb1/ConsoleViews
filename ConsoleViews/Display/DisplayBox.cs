@@ -48,6 +48,27 @@ namespace ConsoleViews.Display
                     throw new InvalidBorderException("Border thickness cannot be less than zero");
                 }
             }
+            if(string.IsNullOrEmpty(name))
+                throw new ArgumentException("Name cannot be empty", "name");
+            if (name.Length > 40)
+                throw new ArgumentException("Name cannot be longer than 40 characters", "name");
+            if (x < 0)
+                throw new ArgumentException("Value cannot be less than zero", "x");
+            if (x > 255)
+                throw new ArgumentException("Value cannot be greater than 255", "x");
+            if (y < 0)
+                throw new ArgumentException("Value cannot be less than zero", "y");
+            if (y > 255)
+                throw new ArgumentException("Value cannot be greater than 255", "y");
+            if (width < 0)
+                throw new ArgumentException("Value cannot be less than zero", "width");
+            if (width > 255)
+                throw new ArgumentException("Value cannot be greater than 255", "width");
+            if (height < 0)
+                throw new ArgumentException("Value cannot be less than zero", "height");
+            if (height > 255)
+                throw new ArgumentException("Value cannot be greater than 255", "height");
+
             Name = name;
             DisplayWidth = (short)width;
             DisplayHeight = (short)height;

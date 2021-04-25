@@ -19,6 +19,15 @@ namespace ConsoleViews.Display
 
         public DisplayScreen(int nrCols, int nrLines)
         {
+            if (nrCols < 0)
+                throw new ArgumentException("Value cannot be less than zero", "nrCols");
+            if (nrLines < 0)
+                throw new ArgumentException("Value cannot be less than zero", "nrLines");
+            if (nrLines > 50)
+                throw new ArgumentException("Max value is 50", "nrLines");
+            if (nrCols > 150)
+                throw new ArgumentException("Max value is 150", "nrCols");
+
             Columns = nrCols;
             Lines = nrLines;
             displayBoxes = new List<DisplayBox>();
@@ -45,9 +54,9 @@ namespace ConsoleViews.Display
             displayBoxes.Add(box);
         }
 
-        public string[] GetDisplayBoxNames()
+        public List<DisplayBox> GetDisplayBoxes()
         {
-            return displayBoxes.Select(x => x.Name).ToArray();
+            return displayBoxes;
         }
 
         public void LoadBorders()

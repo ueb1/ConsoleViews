@@ -13,9 +13,7 @@ namespace ConsoleViews
         static void Main(string[] args)
         {
             DisplayBorder mainBorder = new DisplayBorder('#', 1, ConsoleColor.Cyan);
-            mainBorder.Thickness = new int[] { 1, 1, 1, 1 };
             DisplayBorder sideBorder = new DisplayBorder('#', 1, ConsoleColor.Red);
-            sideBorder.Thickness = new int[] { 1, 1, 1, 1 };
             DisplayBorder bottomBorder = new DisplayBorder('#', 1, ConsoleColor.Yellow);
             DisplayBox mainBox = new DisplayBox("MainBox", 0, 0, 80, 30, mainBorder);
             DisplayBox sideBox = new DisplayBox("SideBox", mainBox.DisplayWidth, 0, 30, 30, sideBorder);
